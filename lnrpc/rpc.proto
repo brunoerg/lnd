@@ -669,7 +669,7 @@ message Utxo {
     string address = 2;
 
     // The value of the unspent coin in satoshis
-    int64 amount_sat = 3;
+    uint64 amount_sat = 3;
 
     // The pkscript in hex
     string pk_script = 4;
@@ -678,7 +678,7 @@ message Utxo {
     OutPoint outpoint = 5;
 
     // The number of confirmations for the Utxo
-    int64 confirmations = 6;
+    uint64 confirmations = 6;
 }
 
 message Transaction {
@@ -686,22 +686,22 @@ message Transaction {
     string tx_hash = 1;
 
     // The transaction amount, denominated in satoshis
-    int64 amount = 2;
+    uint64 amount = 2;
 
     // The number of confirmations
-    int32 num_confirmations = 3;
+    uint32 num_confirmations = 3;
 
     // The hash of the block this transaction was included in
     string block_hash = 4;
 
     // The height of the block this transaction was included in
-    int32 block_height = 5;
+    uint32 block_height = 5;
 
     // Timestamp of this transaction
-    int64 time_stamp = 6;
+    uint64 time_stamp = 6;
 
     // Fees paid for this transaction
-    int64 total_fees = 7;
+    uint64 total_fees = 7;
 
     // Addresses that received funds for this transaction
     repeated string dest_addresses = 8;
@@ -741,17 +741,17 @@ message FeeLimit {
 
         The fields fixed and fixed_msat are mutually exclusive.
         */
-        int64 fixed = 1;
+        uint64 fixed = 1;
 
         /*
         The fee limit expressed as a fixed amount of millisatoshis.
 
         The fields fixed and fixed_msat are mutually exclusive.
         */
-        int64 fixed_msat = 3;
+        uint64 fixed_msat = 3;
 
         // The fee limit expressed as a percentage of the payment amount.
-        int64 percent = 2;
+        uint64 percent = 2;
     }
 }
 
@@ -773,14 +773,14 @@ message SendRequest {
 
     The fields amt and amt_msat are mutually exclusive.
     */
-    int64 amt = 3;
+    uint64 amt = 3;
 
     /*
     The amount to send expressed in millisatoshis.
 
     The fields amt and amt_msat are mutually exclusive.
     */
-    int64 amt_msat = 12;
+    uint64 amt_msat = 12;
 
     /*
     The hash to use within the payment's HTLC. When using REST, this field
@@ -979,32 +979,32 @@ message LightningAddress {
 
 message EstimateFeeRequest {
     // The map from addresses to amounts for the transaction.
-    map<string, int64> AddrToAmount = 1;
+    map<string, uint64> AddrToAmount = 1;
 
     // The target number of blocks that this transaction should be confirmed
     // by.
-    int32 target_conf = 2;
+    uint32 target_conf = 2;
 }
 
 message EstimateFeeResponse {
     // The total fee in satoshis.
-    int64 fee_sat = 1;
+    uint64 fee_sat = 1;
 
     // The fee rate in satoshi/byte.
-    int64 feerate_sat_per_byte = 2;
+    uint64 feerate_sat_per_byte = 2;
 }
 
 message SendManyRequest {
     // The map from addresses to amounts
-    map<string, int64> AddrToAmount = 1;
+    map<string, uint64> AddrToAmount = 1;
 
     // The target number of blocks that this transaction should be confirmed
     // by.
-    int32 target_conf = 3;
+    uint32 target_conf = 3;
 
     // A manual fee rate set in sat/byte that should be used when crafting the
     // transaction.
-    int64 sat_per_byte = 5;
+    uint64 sat_per_byte = 5;
 
     // An optional label for the transaction, limited to 500 characters.
     string label = 6;
@@ -1019,15 +1019,15 @@ message SendCoinsRequest {
     string addr = 1;
 
     // The amount in satoshis to send
-    int64 amount = 2;
+    uint64 amount = 2;
 
     // The target number of blocks that this transaction should be confirmed
     // by.
-    int32 target_conf = 3;
+    uint32 target_conf = 3;
 
     // A manual fee rate set in sat/byte that should be used when crafting the
     // transaction.
-    int64 sat_per_byte = 5;
+    uint64 sat_per_byte = 5;
 
     /*
     If set, then the amount field will be ignored, and lnd will attempt to
@@ -1046,10 +1046,10 @@ message SendCoinsResponse {
 
 message ListUnspentRequest {
     // The minimum number of confirmations to be included.
-    int32 min_confs = 1;
+    uint32 min_confs = 1;
 
     // The maximum number of confirmations to be included.
-    int32 max_confs = 2;
+    uint32 max_confs = 2;
 }
 message ListUnspentResponse {
     // A list of utxos
@@ -1128,7 +1128,7 @@ message DisconnectPeerResponse {
 
 message HTLC {
     bool incoming = 1;
-    int64 amount = 2;
+    uint64 amount = 2;
     bytes hash_lock = 3;
     uint32 expiration_height = 4;
 }
@@ -1183,13 +1183,13 @@ message Channel {
     uint64 chan_id = 4 [jstype = JS_STRING];
 
     // The total amount of funds held in this channel
-    int64 capacity = 5;
+    uint64 capacity = 5;
 
     // This node's current balance in this channel
-    int64 local_balance = 6;
+    uint64 local_balance = 6;
 
     // The counterparty's current balance in this channel
-    int64 remote_balance = 7;
+    uint64 remote_balance = 7;
 
     /*
     The amount calculated to be paid in fees for the current set of commitment
@@ -1197,30 +1197,30 @@ message Channel {
     allow the fee amount to be removed and recalculated with each channel state
     update, including updates that happen after a system restart.
     */
-    int64 commit_fee = 8;
+    uint64 commit_fee = 8;
 
     // The weight of the commitment transaction
-    int64 commit_weight = 9;
+    uint64 commit_weight = 9;
 
     /*
     The required number of satoshis per kilo-weight that the requester will pay
     at all times, for both the funding transaction and commitment transaction.
     This value can later be updated once the channel is open.
     */
-    int64 fee_per_kw = 10;
+    uint64 fee_per_kw = 10;
 
     // The unsettled balance in this channel
-    int64 unsettled_balance = 11;
+    uint64 unsettled_balance = 11;
 
     /*
     The total number of satoshis we've sent within this channel.
     */
-    int64 total_satoshis_sent = 12;
+    uint64 total_satoshis_sent = 12;
 
     /*
     The total number of satoshis we've received within this channel.
     */
-    int64 total_satoshis_received = 13;
+    uint64 total_satoshis_received = 13;
 
     /*
     The total number of updates conducted within this channel.
@@ -1248,12 +1248,12 @@ message Channel {
     string chan_status_flags = 19;
 
     // The minimum satoshis this node is required to reserve in its balance.
-    int64 local_chan_reserve_sat = 20;
+    uint64 local_chan_reserve_sat = 20;
 
     /*
     The minimum satoshis the other node is required to reserve in its balance.
     */
-    int64 remote_chan_reserve_sat = 21;
+    uint64 remote_chan_reserve_sat = 21;
 
     // Deprecated. Use commitment_type.
     bool static_remote_key = 22 [deprecated = true];
@@ -1266,14 +1266,14 @@ message Channel {
     scoring system. Scores are currently not persisted, so this value may be
     less than the lifetime of the channel [EXPERIMENTAL].
     */
-    int64 lifetime = 23;
+    uint64 lifetime = 23;
 
     /*
     The number of seconds that the remote peer has been observed as being online
     by the channel scoring system over the lifetime of the channel
     [EXPERIMENTAL].
     */
-    int64 uptime = 24;
+    uint64 uptime = 24;
 
     /*
     Close address is the address that we will enforce payout to on cooperative
@@ -1344,16 +1344,16 @@ message ChannelCloseSummary {
     string remote_pubkey = 5;
 
     // Total capacity of the channel.
-    int64 capacity = 6;
+    uint64 capacity = 6;
 
     // Height at which the funding transaction was spent.
     uint32 close_height = 7;
 
     // Settled balance at the time of channel closure
-    int64 settled_balance = 8;
+    uint64 settled_balance = 8;
 
     // The sum of all the time-locked outputs at the time of channel closure
-    int64 time_locked_balance = 9;
+    uint64 time_locked_balance = 9;
 
     enum ClosureType {
         COOPERATIVE_CLOSE = 0;
@@ -1411,16 +1411,16 @@ message Peer {
     uint64 bytes_recv = 5;
 
     // Satoshis sent to this peer
-    int64 sat_sent = 6;
+    uint64 sat_sent = 6;
 
     // Satoshis received from this peer
-    int64 sat_recv = 7;
+    uint64 sat_recv = 7;
 
     // A channel is inbound if the counterparty initiated the channel
     bool inbound = 8;
 
     // Ping time to this peer
-    int64 ping_time = 9;
+    uint64 ping_time = 9;
 
     enum SyncType {
         /*
@@ -1528,7 +1528,7 @@ message GetInfoResponse {
     string block_hash = 8;
 
     // Timestamp of the block best known to the wallet
-    int64 best_header_timestamp = 13;
+    uint64 best_header_timestamp = 13;
 
     // Whether the wallet's view is synced to the main chain
     bool synced_to_chain = 9;
@@ -1567,7 +1567,7 @@ message Chain {
 
 message ConfirmationUpdate {
     bytes block_sha = 1;
-    int32 block_height = 2;
+    uint32 block_height = 2;
 
     uint32 num_confs_left = 3;
 }
@@ -1596,11 +1596,11 @@ message CloseChannelRequest {
 
     // The target number of blocks that the closure transaction should be
     // confirmed by.
-    int32 target_conf = 3;
+    uint32 target_conf = 3;
 
     // A manual fee rate set in sat/byte that should be used when crafting the
     // closure transaction.
-    int64 sat_per_byte = 4;
+    uint64 sat_per_byte = 4;
 
     /*
     An optional address to send funds to in the case of a cooperative close.
@@ -1634,7 +1634,7 @@ message ReadyForPsbtFunding {
     The exact amount in satoshis that needs to be sent to the above address to
     fund the pending channel.
     */
-    int64 funding_amount = 2;
+    uint64 funding_amount = 2;
 
     /*
     A raw PSBT that contains the pending channel output. If a base PSBT was
@@ -1659,19 +1659,19 @@ message OpenChannelRequest {
     string node_pubkey_string = 3 [deprecated = true];
 
     // The number of satoshis the wallet should commit to the channel
-    int64 local_funding_amount = 4;
+    uint64 local_funding_amount = 4;
 
     // The number of satoshis to push to the remote side as part of the initial
     // commitment state
-    int64 push_sat = 5;
+    uint64 push_sat = 5;
 
     // The target number of blocks that the funding transaction should be
     // confirmed by.
-    int32 target_conf = 6;
+    uint32 target_conf = 6;
 
     // A manual fee rate set in sat/byte that should be used when crafting the
     // funding transaction.
-    int64 sat_per_byte = 7;
+    uint64 sat_per_byte = 7;
 
     // Whether this channel should be private, not announced to the greater
     // network.
@@ -1679,7 +1679,7 @@ message OpenChannelRequest {
 
     // The minimum value in millisatoshi we will require for incoming HTLCs on
     // the channel.
-    int64 min_htlc_msat = 9;
+    uint64 min_htlc_msat = 9;
 
     // The delay we require on the remote's commitment transaction. If this is
     // not set, it will be scaled automatically with the channel size.
@@ -1687,7 +1687,7 @@ message OpenChannelRequest {
 
     // The minimum number of confirmations each one of your outputs used for
     // the funding transaction must satisfy.
-    int32 min_confs = 11;
+    uint32 min_confs = 11;
 
     // Whether unconfirmed outputs should be used as inputs for the funding
     // transaction.
@@ -1744,10 +1744,10 @@ message OpenStatusUpdate {
 
 message KeyLocator {
     // The family of key being identified.
-    int32 key_family = 1;
+    uint32 key_family = 1;
 
     // The precise index of the key being identified.
-    int32 key_index = 2;
+    uint32 key_index = 2;
 }
 
 message KeyDescriptor {
@@ -1767,7 +1767,7 @@ message ChanPointShim {
     The size of the pre-crafted output to be used as the channel point for this
     channel funding.
     */
-    int64 amt = 1;
+    uint64 amt = 1;
 
     // The target channel point to refrence in created commitment transactions.
     ChannelPoint chan_point = 2;
@@ -1892,7 +1892,7 @@ message PendingHTLC {
     bool incoming = 1;
 
     // The total value of the htlc
-    int64 amount = 2;
+    uint64 amount = 2;
 
     // The final output to be swept back to the user's wallet
     string outpoint = 3;
@@ -1918,20 +1918,20 @@ message PendingChannelsResponse {
         string remote_node_pub = 1;
         string channel_point = 2;
 
-        int64 capacity = 3;
+        uint64 capacity = 3;
 
-        int64 local_balance = 4;
-        int64 remote_balance = 5;
+        uint64 local_balance = 4;
+        uint64 remote_balance = 5;
 
         // The minimum satoshis this node is required to reserve in its
         // balance.
-        int64 local_chan_reserve_sat = 6;
+        uint64 local_chan_reserve_sat = 6;
 
         /*
         The minimum satoshis the other node is required to reserve in its
         balance.
         */
-        int64 remote_chan_reserve_sat = 7;
+        uint64 remote_chan_reserve_sat = 7;
 
         // The party that initiated opening the channel.
         Initiator initiator = 8;
@@ -1954,17 +1954,17 @@ message PendingChannelsResponse {
         each channel state update, including updates that happen after a system
         restart.
         */
-        int64 commit_fee = 4;
+        uint64 commit_fee = 4;
 
         // The weight of the commitment transaction
-        int64 commit_weight = 5;
+        uint64 commit_weight = 5;
 
         /*
         The required number of satoshis per kilo-weight that the requester will
         pay at all times, for both the funding transaction and commitment
         transaction. This value can later be updated once the channel is open.
         */
-        int64 fee_per_kw = 6;
+        uint64 fee_per_kw = 6;
     }
 
     message WaitingCloseChannel {
@@ -1972,7 +1972,7 @@ message PendingChannelsResponse {
         PendingChannel channel = 1;
 
         // The balance in satoshis encumbered in this channel
-        int64 limbo_balance = 2;
+        uint64 limbo_balance = 2;
 
         /*
         A list of valid commitment transactions. Any of these can confirm at
@@ -2026,7 +2026,7 @@ message PendingChannelsResponse {
         string closing_txid = 2;
 
         // The balance in satoshis encumbered in this pending channel
-        int64 limbo_balance = 3;
+        uint64 limbo_balance = 3;
 
         // The height at which funds can be swept into the wallet
         uint32 maturity_height = 4;
@@ -2039,7 +2039,7 @@ message PendingChannelsResponse {
         int32 blocks_til_maturity = 5;
 
         // The total value of funds successfully recovered from this channel
-        int64 recovered_balance = 6;
+        uint64 recovered_balance = 6;
 
         repeated PendingHTLC pending_htlcs = 8;
 
@@ -2053,7 +2053,7 @@ message PendingChannelsResponse {
     }
 
     // The balance in satoshis encumbered in pending channels
-    int64 total_limbo_balance = 1;
+    uint64 total_limbo_balance = 1;
 
     // Channels pending opening
     repeated PendingOpenChannel pending_open_channels = 2;
@@ -2099,23 +2099,23 @@ message WalletBalanceRequest {
 }
 message WalletBalanceResponse {
     // The balance of the wallet
-    int64 total_balance = 1;
+    uint64 total_balance = 1;
 
     // The confirmed balance of a wallet(with >= 1 confirmations)
-    int64 confirmed_balance = 2;
+    uint64 confirmed_balance = 2;
 
     // The unconfirmed balance of a wallet(with 0 confirmations)
-    int64 unconfirmed_balance = 3;
+    uint64 unconfirmed_balance = 3;
 }
 
 message ChannelBalanceRequest {
 }
 message ChannelBalanceResponse {
     // Sum of channels balances denominated in satoshis
-    int64 balance = 1;
+    uint64 balance = 1;
 
     // Sum of channels pending balances denominated in satoshis
-    int64 pending_open_balance = 2;
+    uint64 pending_open_balance = 2;
 }
 
 message QueryRoutesRequest {
@@ -2127,14 +2127,14 @@ message QueryRoutesRequest {
 
     The fields amt and amt_msat are mutually exclusive.
     */
-    int64 amt = 2;
+    uint64 amt = 2;
 
     /*
     The amount to send expressed in millisatoshis.
 
     The fields amt and amt_msat are mutually exclusive.
     */
-    int64 amt_msat = 12;
+    uint64 amt_msat = 12;
 
     reserved 3;
 
@@ -2274,12 +2274,12 @@ message Hop {
     output index for the channel.
     */
     uint64 chan_id = 1 [jstype = JS_STRING];
-    int64 chan_capacity = 2;
-    int64 amt_to_forward = 3 [deprecated = true];
-    int64 fee = 4 [deprecated = true];
+    uint64 chan_capacity = 2;
+    uint64 amt_to_forward = 3 [deprecated = true];
+    uint64 fee = 4 [deprecated = true];
     uint32 expiry = 5;
-    int64 amt_to_forward_msat = 6;
-    int64 fee_msat = 7;
+    uint64 amt_to_forward_msat = 6;
+    uint64 fee_msat = 7;
 
     /*
     An optional public key of the hop. If the public key is given, the payment
@@ -2325,7 +2325,7 @@ message MPPRecord {
     and payment_hash sum exactly to total_amt_msat. The same
     total_amt_msat must be used on all subpayments.
     */
-    int64 total_amt_msat = 10;
+    uint64 total_amt_msat = 10;
 }
 
 /*
@@ -2349,7 +2349,7 @@ message Route {
     of a one-hop payment, this value will be zero as we don't need to pay a fee
     to ourselves.
     */
-    int64 total_fees = 2 [deprecated = true];
+    uint64 total_fees = 2 [deprecated = true];
 
     /*
     The total amount of funds required to complete a payment over this route.
@@ -2358,7 +2358,7 @@ message Route {
     satoshis, otherwise the route will fail at an intermediate node due to an
     insufficient amount of fees.
     */
-    int64 total_amt = 3 [deprecated = true];
+    uint64 total_amt = 3 [deprecated = true];
 
     /*
     Contains details concerning the specific forwarding details at each hop.
@@ -2368,12 +2368,12 @@ message Route {
     /*
     The total fees in millisatoshis.
     */
-    int64 total_fees_msat = 5;
+    uint64 total_fees_msat = 5;
 
     /*
     The total amount in millisatoshis.
     */
-    int64 total_amt_msat = 6;
+    uint64 total_amt_msat = 6;
 }
 
 message NodeInfoRequest {
@@ -2397,7 +2397,7 @@ message NodeInfo {
     uint32 num_channels = 2;
 
     // The sum of all channels capacity for the node, denominated in satoshis.
-    int64 total_capacity = 3;
+    uint64 total_capacity = 3;
 
     // A list of all public channels for the node.
     repeated ChannelEdge channels = 4;
@@ -2425,9 +2425,9 @@ message NodeAddress {
 
 message RoutingPolicy {
     uint32 time_lock_delta = 1;
-    int64 min_htlc = 2;
-    int64 fee_base_msat = 3;
-    int64 fee_rate_milli_msat = 4;
+    uint64 min_htlc = 2;
+    uint64 fee_base_msat = 3;
+    uint64 fee_rate_milli_msat = 4;
     bool disabled = 5;
     uint64 max_htlc_msat = 6;
     uint32 last_update = 7;
@@ -2454,7 +2454,7 @@ message ChannelEdge {
     string node1_pub = 4;
     string node2_pub = 5;
 
-    int64 capacity = 6;
+    uint64 capacity = 6;
 
     RoutingPolicy node1_policy = 7;
     RoutingPolicy node2_policy = 8;
@@ -2526,12 +2526,12 @@ message NetworkInfo {
     uint32 num_nodes = 4;
     uint32 num_channels = 5;
 
-    int64 total_network_capacity = 6;
+    uint64 total_network_capacity = 6;
 
     double avg_channel_size = 7;
-    int64 min_channel_size = 8;
-    int64 max_channel_size = 9;
-    int64 median_channel_size_sat = 10;
+    uint64 min_channel_size = 8;
+    uint64 max_channel_size = 9;
+    uint64 median_channel_size_sat = 10;
 
     // The number of edges marked as zombies.
     uint64 num_zombie_chans = 11;
@@ -2569,7 +2569,7 @@ message ChannelEdgeUpdate {
 
     ChannelPoint chan_point = 2;
 
-    int64 capacity = 3;
+    uint64 capacity = 3;
 
     RoutingPolicy routing_policy = 4;
 
@@ -2583,7 +2583,7 @@ message ClosedChannelUpdate {
     output index for the channel.
     */
     uint64 chan_id = 1 [jstype = JS_STRING];
-    int64 capacity = 2;
+    uint64 capacity = 2;
     uint32 closed_height = 3;
     ChannelPoint chan_point = 4;
 }
@@ -2645,23 +2645,23 @@ message Invoice {
 
     The fields value and value_msat are mutually exclusive.
     */
-    int64 value = 5;
+    uint64 value = 5;
 
     /*
     The value of this invoice in millisatoshis
 
     The fields value and value_msat are mutually exclusive.
     */
-    int64 value_msat = 23;
+    uint64 value_msat = 23;
 
     // Whether this invoice has been fulfilled
     bool settled = 6 [deprecated = true];
 
     // When this invoice was created
-    int64 creation_date = 7;
+    uint64 creation_date = 7;
 
     // When this invoice was settled
-    int64 settle_date = 8;
+    uint64 settle_date = 8;
 
     /*
     A bare-bones invoice for a payment within the Lightning Network. With the
@@ -2679,7 +2679,7 @@ message Invoice {
     bytes description_hash = 10;
 
     // Payment request expiry time in seconds. Default is 3600 (1 hour).
-    int64 expiry = 11;
+    uint64 expiry = 11;
 
     // Fallback on-chain address.
     string fallback_addr = 12;
@@ -2713,7 +2713,7 @@ message Invoice {
     uint64 settle_index = 17;
 
     // Deprecated, use amt_paid_sat or amt_paid_msat.
-    int64 amt_paid = 18 [deprecated = true];
+    uint64 amt_paid = 18 [deprecated = true];
 
     /*
     The amount that was accepted for this invoice, in satoshis. This will ONLY
@@ -2723,7 +2723,7 @@ message Invoice {
     MORE that was specified in the original invoice. So we'll record that here
     as well.
     */
-    int64 amt_paid_sat = 19;
+    uint64 amt_paid_sat = 19;
 
     /*
     The amount that was accepted for this invoice, in millisatoshis. This will
@@ -2733,7 +2733,7 @@ message Invoice {
     paid MORE that was specified in the original invoice. So we'll record that
     here as well.
     */
-    int64 amt_paid_msat = 20;
+    uint64 amt_paid_msat = 20;
 
     enum InvoiceState {
         OPEN = 0;
@@ -2778,16 +2778,16 @@ message InvoiceHTLC {
     uint64 amt_msat = 3;
 
     // Block height at which this htlc was accepted.
-    int32 accept_height = 4;
+    uint32 accept_height = 4;
 
     // Time at which this htlc was accepted.
-    int64 accept_time = 5;
+    uint64 accept_time = 5;
 
     // Time at which this htlc was settled or canceled.
-    int64 resolve_time = 6;
+    uint64 resolve_time = 6;
 
     // Block height at which this htlc expires.
-    int32 expiry_height = 7;
+    uint32 expiry_height = 7;
 
     // Current state the htlc is in.
     InvoiceHTLCState state = 8;
@@ -2932,24 +2932,24 @@ message Payment {
     string payment_hash = 1;
 
     // Deprecated, use value_sat or value_msat.
-    int64 value = 2 [deprecated = true];
+    uint64 value = 2 [deprecated = true];
 
     // Deprecated, use creation_time_ns
-    int64 creation_date = 3 [deprecated = true];
+    uint64 creation_date = 3 [deprecated = true];
 
     reserved 4;
 
     // Deprecated, use fee_sat or fee_msat.
-    int64 fee = 5 [deprecated = true];
+    uint64 fee = 5 [deprecated = true];
 
     // The payment preimage
     string payment_preimage = 6;
 
     // The value of the payment in satoshis
-    int64 value_sat = 7;
+    uint64 value_sat = 7;
 
     // The value of the payment in milli-satoshis
-    int64 value_msat = 8;
+    uint64 value_msat = 8;
 
     // The optional payment request being fulfilled.
     string payment_request = 9;
@@ -2965,13 +2965,13 @@ message Payment {
     PaymentStatus status = 10;
 
     //  The fee paid for this payment in satoshis
-    int64 fee_sat = 11;
+    uint64 fee_sat = 11;
 
     //  The fee paid for this payment in milli-satoshis
-    int64 fee_msat = 12;
+    uint64 fee_msat = 12;
 
     // The time in UNIX nanoseconds at which the payment was created.
-    int64 creation_time_ns = 13;
+    uint64 creation_time_ns = 13;
 
     // The HTLCs made in attempt to settle the payment.
     repeated HTLCAttempt htlcs = 14;
@@ -3000,13 +3000,13 @@ message HTLCAttempt {
     Route route = 2;
 
     // The time in UNIX nanoseconds at which this HTLC was sent.
-    int64 attempt_time_ns = 3;
+    uint64 attempt_time_ns = 3;
 
     /*
     The time in UNIX nanoseconds at which this HTLC was settled or failed.
     This value will not be set if the HTLC is still IN_FLIGHT.
     */
-    int64 resolve_time_ns = 4;
+    uint64 resolve_time_ns = 4;
 
     // Detailed htlc failure info.
     Failure failure = 5;
@@ -3089,16 +3089,16 @@ message PayReqString {
 message PayReq {
     string destination = 1;
     string payment_hash = 2;
-    int64 num_satoshis = 3;
-    int64 timestamp = 4;
-    int64 expiry = 5;
+    uint64 num_satoshis = 3;
+    uint64 timestamp = 4;
+    uint64 expiry = 5;
     string description = 6;
     string description_hash = 7;
     string fallback_addr = 8;
-    int64 cltv_expiry = 9;
+    uint64 cltv_expiry = 9;
     repeated RouteHint route_hints = 10;
     bytes payment_addr = 11;
-    int64 num_msat = 12;
+    uint64 num_msat = 12;
     map<uint32, Feature> features = 13;
 }
 
@@ -3138,11 +3138,11 @@ message ChannelFeeReport {
     string channel_point = 1;
 
     // The base fee charged regardless of the number of milli-satoshis sent.
-    int64 base_fee_msat = 2;
+    uint64 base_fee_msat = 2;
 
     // The amount charged per milli-satoshis transferred expressed in
     // millionths of a satoshi.
-    int64 fee_per_mil = 3;
+    uint64 fee_per_mil = 3;
 
     // The effective fee rate in milli-satoshis. Computed by dividing the
     // fee_per_mil value by 1 million.
@@ -3176,7 +3176,7 @@ message PolicyUpdateRequest {
     }
 
     // The base fee charged regardless of the number of milli-satoshis sent.
-    int64 base_fee_msat = 3;
+    uint64 base_fee_msat = 3;
 
     // The effective fee rate in milli-satoshis. The precision of this value
     // goes up to 6 decimal places, so 1e-6.
