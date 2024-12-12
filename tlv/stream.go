@@ -161,11 +161,155 @@ func (s *Stream) DecodeWithParsedTypesP2P(r io.Reader) (TypeMap, error) {
 	return s.decode(r, make(TypeMap), true)
 }
 
+func (s *Stream) DecodeWithParsedTypesP2POriginal(r io.Reader) (TypeMap, error) {
+	return s.decode_original(r, make(TypeMap), true)
+}
+
 // decode is a helper function that performs the basis of stream decoding. If
 // the caller needs the set of parsed types, it must provide an initialized
 // parsedTypes, otherwise the returned TypeMap will be nil. If the p2p bool is
 // true, then the record size is capped at 65535. Otherwise, it is not capped.
 func (s *Stream) decode(r io.Reader, parsedTypes TypeMap, p2p bool) (TypeMap,
+	error) {
+
+	var (
+		typ       Type
+		min       Type
+		recordIdx int
+		overflow  bool
+	)
+
+	// Iterate through all possible type identifiers. As types are read from
+	// the io.Reader, min will skip forward to the last read type.
+	for {
+		// Read the next varint type.
+		t, err := ReadVarInt(r, &s.buf)
+		switch {
+
+		// We'll silence an EOF when zero bytes remain, meaning the
+		// stream was cleanly encoded.
+		case err == io.EOF:
+			return parsedTypes, nil
+
+		// Other unexpected errors.
+		case err != nil:
+			return nil, err
+		}
+
+		typ = Type(t)
+
+		// Assert that this type is greater than any previously read.
+		// If we've already overflowed and we parsed another type, the
+		// stream is not canonical. This check prevents us from accepts
+		// encodings that have duplicate records or from accepting an
+		// unsorted series.
+		if overflow || typ < min {
+			return nil, ErrStreamNotCanonical
+		}
+
+		// Read the varint length.
+		length, err := ReadVarInt(r, &s.buf)
+		switch {
+
+		// We'll convert any EOFs to ErrUnexpectedEOF, since this
+		// results in an invalid record.
+		case err == io.EOF:
+			return nil, io.ErrUnexpectedEOF
+
+		// Other unexpected errors.
+		case err != nil:
+			return nil, err
+		}
+
+		// Place a soft limit on the size of a sane record, which
+		// prevents malicious encoders from causing us to allocate an
+		// unbounded amount of memory when decoding variable-sized
+		// fields. This is only checked when the p2p bool is true.
+		if p2p && length > MaxRecordSize {
+			return nil, ErrRecordTooLarge
+		}
+
+		// Search the records known to the stream for this type. We'll
+		// begin the search and recordIdx and walk forward until we find
+		// it or the next record's type is larger.
+		rec, newIdx, ok := s.getRecord(typ, recordIdx)
+		switch {
+
+		// We know of this record type, proceed to decode the value.
+		// This method asserts that length bytes are read in the
+		// process, and returns an error if the number of bytes is not
+		// exactly length.
+		case ok:
+			err := rec.decoder(r, rec.value, &s.buf, length)
+			switch {
+
+			// We'll convert any EOFs to ErrUnexpectedEOF, since this
+			// results in an invalid record.
+			case err == io.EOF:
+				return nil, io.ErrUnexpectedEOF
+
+			// Other unexpected errors.
+			case err != nil:
+				return nil, err
+			}
+
+			// Record the successfully decoded type if the caller
+			// provided an initialized TypeMap.
+			if parsedTypes != nil {
+				parsedTypes[typ] = nil
+			}
+
+		// Otherwise, the record type is unknown and is odd, discard the
+		// number of bytes specified by length.
+		default:
+			// If the caller provided an initialized TypeMap, record
+			// the encoded bytes.
+			var b *bytes.Buffer
+			writer := io.Discard
+			if parsedTypes != nil {
+				b = bytes.NewBuffer(make([]byte, 0, length))
+				writer = b
+			}
+
+			_, err := io.CopyN(writer, r, int64(length))
+			switch {
+
+			// We'll convert any EOFs to ErrUnexpectedEOF, since this
+			// results in an invalid record.
+			case err == io.EOF:
+				return nil, io.ErrUnexpectedEOF
+
+			// Other unexpected errors.
+			case err != nil:
+				return nil, err
+			}
+
+			if parsedTypes != nil {
+				parsedTypes[typ] = b.Bytes()
+			}
+		}
+
+		// Update our record index so that we can begin our next search
+		// from where we left off.
+		recordIdx = newIdx
+
+		// If we've parsed the largest possible type, the next loop will
+		// overflow back to zero. However, we need to attempt parsing
+		// the next type to ensure that the stream is empty.
+		if typ == math.MaxUint64 {
+			overflow = true
+		}
+
+		// Finally, set our lower bound on the next accepted type.
+		min = typ + 1
+	}
+}
+
+// decode is a helper function that performs the basis of stream decoding. If
+// the caller needs the set of parsed types, it must provide an initialized
+// parsedTypes, otherwise the returned TypeMap will be nil. If the p2p bool is
+// true, then the record size is capped at 65535. Otherwise, it is not capped.
+func (s *Stream) decode_original(r io.Reader, parsedTypes TypeMap, p2p bool) (TypeMap,
 	error) {
 
 	var (
