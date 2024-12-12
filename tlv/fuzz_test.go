@@ -273,13 +273,18 @@ func FuzzStream(f *testing.F) {
 		decodeStream := MustNewStream(decodeRecords...)
 
 		r := bytes.NewReader(data)
+		rCopy := bytes.NewReader(data)
 
 		// Use the P2P decoding method to avoid OOMs from large lengths
 		// in the fuzzer TLV data.
 		parsedTypes, err := decodeStream.DecodeWithParsedTypesP2P(r)
+		parsedTypesOriginal, errOriginal := decodeStream.DecodeWithParsedTypesP2POriginal(rCopy)
 		if err != nil {
+			require.NotEqual(t, errOriginal, nil)
 			return
 		}
+
+		require.EqualValues(t, parsedTypes, parsedTypesOriginal)
 
 		encoded := encodeParsedTypes(t, parsedTypes, decodeRecords)
 
